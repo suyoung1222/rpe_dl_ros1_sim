@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="gui"       default="true"/>
+  <arg name="rviz"      default="false"/>
+  <arg name="config"    default="base" />
+  <!-- <arg name="world"     default="$(find jackal_gazebo)/worlds/jackal_race.world"/> -->
+  <arg name="world"     default="$(find aws_robomaker_small_warehouse_world)/worlds/warehouse_demo2_husky.world"/>
+  <!-- <arg name="odom_topic"       default="odometry/filtered"/> -->
+  <arg name="odom_topic"       default="odom_ground_truth"/>
+  <arg name="ns1"       default="jackal1"/>
+  <arg name="ns2"       default="jackal2"/>
+  <arg name="ns3"       default="jackal3"/>
+  <arg name="ns4"       default="jackal4"/>
+  <arg name="x1"       default="4.5"/>
+  <arg name="y1"       default="-1.9"/>
+  <arg name="z1"       default="0"/>
+  <arg name="x2"       default="4.5"/>
+  <arg name="y2"       default="0.2"/>
+  <arg name="z2"       default="0"/>
+  <arg name="x3"       default="4.5"/>
+  <arg name="y3"       default="2.3"/>
+  <arg name="z3"       default="0"/>
+
+  <arg name="arm_x_1"       default="-0.6"/>
+  <arg name="arm_y_1"       default="-1.1"/>
+  <arg name="arm_z_1"       default="0.42"/>
+
+  <arg name="arm_x_2"       default="-0.6"/>
+  <arg name="arm_y_2"       default="-7.6"/>
+  <arg name="arm_z_2"       default="0.42"/>
+
+  <arg name="arm_ns_1"       default="arm1"/>
+  <arg name="arm_ns_2"       default="arm2"/>
+
+  <!-- Start Gazebo. -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  <!-- <include file="$(find gazebo_ros_link_attacher)/launch/test_attacher.launch"> -->
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui"          value="$(arg gui)"/>
+    <arg name="world_name"   value="$(arg world)"/>
+    <arg name="debug" value="0" />
+    <arg name="headless" value="false" />
+  </include>
+
+  <!-- Spawn the robots. -->
+  <include file="$(find multi_jackal_base)/launch/base_jackal.launch">
+    <arg name="ns"            value="$(arg ns1)"/>
+    <arg name="config"        value="$(arg config)"/>
+    <arg name="x"             value="$(arg x1)"/>
+    <arg name="y"             value="$(arg y1)"/>
+    <arg name="z"             value="$(arg z1)"/>
+  </include>
+  <include file="$(find multi_jackal_base)/launch/base_jackal.launch">
+    <arg name="ns"            value="$(arg ns2)"/>
+    <arg name="config"        default="$(arg config)" />
+    <arg name="x"             value="$(arg x2)"/>
+    <arg name="y"             value="$(arg y2)"/>
+    <arg name="z"             value="$(arg z2)"/>
+  </include>
+  <!-- <include file="$(find multi_jackal_base)/launch/base_jackal.launch">
+    <arg name="ns"            value="$(arg ns3)"/>
+    <arg name="config"        default="$(arg config)" />
+    <arg name="x"             value="$(arg x3)"/>
+    <arg name="y"             value="$(arg y3)"/>
+    <arg name="z"             value="$(arg z3)"/>
+  </include> -->
+  <!-- <include file="$(find multi_jackal_base)/launch/base_jackal.launch">
+    <arg name="ns"            value="$(arg ns4)"/>
+    <arg name="config"        default="$(arg config)" />
+    <arg name="x"             value="$(arg x4)"/>
+    <arg name="y"             value="$(arg y4)"/>
+    <arg name="z"             value="$(arg z4)"/>
+  </include> -->
+
+  <group ns="husky1">
+    <include file="$(find multihusky_gazebo)/launch/spawn_multihusky.launch">
+        <arg name="robot_namespace" value="husky1" />
+    <arg name="x"             value="$(arg x3)"/>
+    <arg name="y"             value="$(arg y3)"/>
+    <!-- <arg name="z"             value="$(arg z4)"/> -->
+    <arg name="laser_enabled" value="false"/>
+    <arg name="kinect_enabled" value="false"/>
+    </include>
+  </group>
+  
+  <!-- View in RVIZ. -->
+  <group if="$(arg rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_jackal_base)/rviz/four_jackals.rviz" >
+    </node>
+  </group>
+  
+
+  <!-- <include file="$(find ur_gazebo)/launch/ur5_bringup.launch">
+    <arg name="spawn_x"             value="$(arg arm_x_1)"/>
+    <arg name="spawn_y"             value="$(arg arm_y_1)"/>
+    <arg name="spawn_z"             value="$(arg arm_z_1)"/>
+    <arg name="ns"                  value="$(arg arm_ns_1)"/>
+  </include>
+
+  <include file="$(find ur5_moveit_config)/launch/moveit_planning_execution.launch">
+    <arg name="sim" value="true" />
+  </include>
+
+  <include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch" /> -->
+
+  <!-- <group ns="arm2">
+    <include file="$(find ur_gazebo)/launch/ur5_bringup.launch">
+      <arg name="spawn_x"             value="$(arg arm_x_2)"/>
+      <arg name="spawn_y"             value="$(arg arm_y_2)"/>
+      <arg name="spawn_z"             value="$(arg arm_z_2)"/>
+    </include>
+
+    <include file="$(find ur5_moveit_config)/launch/moveit_planning_execution.launch">
+      <arg name="sim" value="true" />
+    </include>
+
+    <include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch" />
+  </group> -->
+
+
+  <!-- <include file="$(find ur_gazebo)/launch/ur10_bringup.launch">
+    <arg name="spawn_x"             value="$(arg arm_x_1)"/>
+    <arg name="spawn_y"             value="$(arg arm_y_1)"/>
+    <arg name="spawn_z"             value="$(arg arm_z_1)"/>
+  </include>
+
+  <include file="$(find ur10_moveit_config)/launch/moveit_planning_execution.launch">
+    <arg name="sim" value="true" />
+  </include>
+
+  <include file="$(find ur10_moveit_config)/launch/moveit_rviz.launch" /> -->
+
+
+
+
+  <!-- Run the main MoveIt executable with trajectory execution -->
+  <include file="$(find panda_multiple_arms_moveit_config)/launch/move_group.launch">
+      <arg name="allow_trajectory_execution" value="true" />
+      <arg name="moveit_controller_manager" value="ros_control" />
+      <arg name="fake_execution_type" value="interpolate" />
+      <arg name="info" value="true" />
+      <arg name="debug" value="false" />
+      <arg name="pipeline" value="ompl" />
+      <arg name="load_robot_description" value="true" />
+  </include>
+
+  <!-- Launch empty Gazebo world -->
+  <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="use_sim_time" value="true" />
+      <arg name="gui" value="true" />
+      <arg name="paused" value="false" />
+      <arg name="debug" value="false" />
+  </include> -->
+
+  <!-- Find my robot Description-->
+  <param name="robot_description" command="$(find xacro)/xacro  '$(find panda_multiple_arms)/robot_description/panda_multiple_arms.xacro'" />
+
+  <!-- Spawn The robot over the robot_description param-->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param robot_description -model panda_multiple_arms -x 0.5" />
+
+
+  <node name="jackal1_move" pkg="lvws_demo" type="ugv.py" output="screen" args="jackal1" />
+  <node name="jackal2_move" pkg="lvws_demo" type="ugv.py" output="screen" args="jackal2" />
+  <node name="husky1_move" pkg="lvws_demo" type="ugv.py" output="screen" args="husky1" />
+
+
+  <!-- Start the controllers and robot state publisher-->
+  <include file="$(find panda_multiple_arms)/launch/control_utils.launch"/>
+
+  <!-- Start moveit_rviz with the motion planning plugin -->
+  <include file="$(find panda_multiple_arms_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="rviz_config" value="$(find panda_multiple_arms_moveit_config)/launch/moveit.rviz" />
+  </include>
+
+  <node name="scheduler" pkg="lvws_demo" type="scheduler.py" output="screen" />
+
+
+</launch>

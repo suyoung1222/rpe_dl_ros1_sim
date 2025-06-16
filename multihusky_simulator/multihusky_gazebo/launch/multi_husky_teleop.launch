@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Teleop for Husky h1 -->
+  <group ns="h1">
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_h1" output="screen" respawn="false">
+      <remap from="cmd_vel" to="/h1/husky_velocity_controller/cmd_vel"/>
+    </node>
+  </group>
+
+  <!-- Teleop for Husky h2 -->
+  <!-- <group ns="h2">
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_h2" output="screen" respawn="false">
+      <remap from="cmd_vel" to="/h2/husky_velocity_controller/cmd_vel"/>
+    </node>
+  </group> -->
+
+</launch>

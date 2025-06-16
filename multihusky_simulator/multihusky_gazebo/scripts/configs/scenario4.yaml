@@ -1,0 +1,21 @@
+robots:
+  - name: Bunker1 # UnitreeB1
+    role: leader
+    image_topic: /Bunker_1_colorImg #/UnitreeB1_colorImg
+
+  - name: Jackal_2
+    role: follower
+    image_topic: /Jackal_2_colorImg
+    depth_topic: /Jackal_2_depthImg
+    odometry_topic: /Jackal_2_selfodom
+    cmd_topic: /Jackal_2_cmd_vel
+    desired_translation: [0.0, -1.0, 0.0]
+    desired_yaw: 0.0
+  # - name: Bunker1
+  #   role: follower
+  #   image_topic: /Bunker_1_colorImg
+  #   depth_topic: /Bunker_1_depthImg
+  #   odometry_topic: /Bunker_1_selfodom
+  #   cmd_topic: /Bunker_1_cmd_vel
+  #   desired_translation: [0.0, 0.5, 0.0] # F pose w.r.t. L
+  #   desired_yaw: 0.0  

@@ -1,0 +1,13 @@
+robots:
+  - name: h1 # UnitreeB1
+    role: leader
+    image_topic: /h1/realsense/color/image_raw #/UnitreeB1_colorImg
+
+  - name: h2
+    role: follower
+    image_topic: /h2/realsense/color/image_raw
+    depth_topic: /h2/realsense/depth/image_rect_raw 
+    odometry_topic: /h2/husky_velocity_controller/odom 
+    cmd_topic: /h2/cmd_vel
+    desired_translation: [-1.5, -1.5, 0.0]
+    desired_yaw: 0.0

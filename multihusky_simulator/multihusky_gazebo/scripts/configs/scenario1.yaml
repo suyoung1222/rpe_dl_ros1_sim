@@ -1,0 +1,3 @@
+desired_relative_pose:
+  translation: [-1.2, -0.5, 0.0]   # Follower should stay 0.5m forward
+  rotation: [0.0, 0.0, 0.0, 1.0] # Quaternion (x, y, z, w)

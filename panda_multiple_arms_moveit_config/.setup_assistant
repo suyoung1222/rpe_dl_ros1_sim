@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: panda_multiple_arms
+    relative_path: robot_description/panda_multiple_arms.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/panda_multiple_arms.srdf
+  CONFIG:
+    author_name: name
+    author_email: email@email.com
+    generated_timestamp: 1688027340
