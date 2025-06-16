@@ -40,3 +40,32 @@ Because the panda_multiple_arms package is not very stable during initialization
 
 To check if all components have been loaded correctly, you can compare the topc list at [topic_list.txt](docs/topic_list.txt) with your currently loaded topics (`rostopic list`). 
 # rpe_dl_ros1_sim
+
+
+### Pose Estimation
+
+## Requirement
+```bash
+roscd husky_description/urdf/
+vim husky.urdf.xacro
+# modify below lines
+<xacro:arg name="realsense_enabled"             default="$(optenv HUSKY_REALSENSE_ENABLED 1)" />
+<xacro:arg name="realsense_xyz"                 default="$(optenv HUSKY_REALSENSE_XYZ 0 0 0.2)" />
+```
+
+terminal1:
+```bash
+roslaunch multihusky_gazebo multihusky_playpen.launch
+```
+
+terminal2:
+```bash
+roslaunch multihusky_gazebo multi_husky_teleop.launch 
+```
+
+terminal3:
+```bash
+rosrun multihusky_gazebo run_task_sim.py 
+```
+
+
