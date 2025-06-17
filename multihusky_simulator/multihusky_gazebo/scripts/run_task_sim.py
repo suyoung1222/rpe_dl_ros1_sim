@@ -108,13 +108,36 @@ class RobotFollower:
         self.cmd_pub.publish(cmd_msg)
         rospy.loginfo(f"{self.name} cmd: vx={cmd_linear_x:.2f}, vyaw={cmd_angular_z:.2f}")
 
+    def publish_estimated_pose(self, R, t):
+        pose_msg = PoseStamped()
+        pose_msg.header.stamp = rospy.Time.now()
+        pose_msg.header.frame_id = "odom"  # Change to "map" or other frame if needed
+
+        pose_msg.pose.position.x = t[0]
+        pose_msg.pose.position.y = t[1]
+        pose_msg.pose.position.z = t[2]
+
+        # Convert rotation mapose_msgtrix to quaternion
+        quat = quaternion_from_matrix(np.vstack([
+            np.hstack([R, np.zeros((3, 1))]),
+            [0, 0, 0, 1]
+        ]))
+
+        pose_msg.pose.orientation.x = quat[0]
+        pose_msg.pose.orientation.y = quat[1]
+        pose_msg.pose.orientation.z = quat[2]
+        pose_msg.pose.orientation.w = quat[3]
+
+        self.pose_pub.publish(pose_msg)
+        rospy.loginfo(f"=============================Estimated Pose============================={pose_msg}")
+
     def run(self):
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             leader_img = self.get_leader_image()
             if leader_img is not None and not self.latest_img.empty() and not self.latest_depth.empty():
                 try:
-                    R, t = estimate_relative_pose(
+                    R, t, pose_estimation_valid = estimate_relative_pose(
                         follower_img=self.latest_img.get_nowait(),
                         leader_img=leader_img,
                         follower_depth=self.latest_depth.get_nowait()
@@ -135,6 +158,8 @@ class RobotFollower:
                         if abs(yaw_error) < 0.1:
                             yaw_error = 0.0
                     rospy.loginfo(f"pose estimation: {T_mat}")
+                    if pose_estimation_valid:
+                        self.publish_estimated_pose(T_mat[:3, :3], T_mat[:3, 3])
                     self.target_vx = pos_error[0]
                     self.target_vyaw = yaw_error
 

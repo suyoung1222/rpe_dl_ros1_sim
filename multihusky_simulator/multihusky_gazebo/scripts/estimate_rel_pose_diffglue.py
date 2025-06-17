@@ -307,17 +307,19 @@ def estimate_relative_pose(
         flags=cv2.SOLVEPNP_ITERATIVE,
     )
 
+    pose_estimation_valid = 1
     if not success:
+        pose_estimation_valid = 0
         raise ValueError("PnP solver failed to find a valid pose.")
 
     # Convert rotation vector to a 3x3 rotation matrix
     R_f2l, _ = cv2.Rodrigues(rvec)  # follower->leader
     t_f2l = tvec.reshape(3)
-
+    
     # ----------------------------------------------------------------
     # 8) Return results
     # ----------------------------------------------------------------
-    return R_f2l, t_f2l
+    return R_f2l, t_f2l, pose_estimation_valid
 
 
 if __name__ == "__main__":
