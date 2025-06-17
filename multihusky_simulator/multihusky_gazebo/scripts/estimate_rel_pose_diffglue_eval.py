@@ -290,32 +290,38 @@ def estimate_relative_pose(
 
     if len(pts_3d_follower) < 6:
         raise ValueError(
-            f"Not enough valid 3D-root/catkin_multi_ws/src/lvws_demo/multihusky_simulator/multihusky_gazebo/scripts/estimate_rel_pose_diffglue.py2D correspondences after filtering: {len(pts_3d_follower)}."
+            f"Not enough valid 3D-2D correspondences after filtering: {len(pts_3d_follower)}."
         )
     print(f"Number of feature matches after filtering: {len(pts_3d_follower)}.")
 
     pts_3d_follower = np.array(pts_3d_follower, dtype=np.float32)
     pts_2d_leader = np.array(pts_2d_leader, dtype=np.float32)
 
-    success, rvec, tvec, inliers = cv2.solvePnPRansac(
-        pts_3d_follower,
-        pts_2d_leader,
-        K_leader,
-        distCoeffs=None,
-        reprojectionError= 1.0, #3.0,
-        confidence=0.985, #0.999,
-        flags=cv2.SOLVEPNP_ITERATIVE,
-    )
 
-    pose_estimation_valid = 1
-    if not success:
+    try:
+        success, rvec, tvec, inliers = cv2.solvePnPRansac(
+            pts_3d_follower,
+            pts_2d_leader,
+            K_leader,
+            distCoeffs=None,
+            reprojectionError= 1.0, #3.0,
+            confidence=0.985, #0.999,
+            flags=cv2.SOLVEPNP_ITERATIVE,
+        )
+
+        pose_estimation_valid = 1
+        if not success:
+            pose_estimation_valid = 0
+            R_f2l =  0
+            t_f2l = 0
+        else:
+            # Convert rotation vector to a 3x3 rotation matrix
+            R_f2l, _ = cv2.Rodrigues(rvec)  # follower->leader
+            t_f2l = tvec.reshape(3)
+    except:
         pose_estimation_valid = 0
-        raise ValueError("PnP solver failed to find a valid pose.")
-
-    # Convert rotation vector to a 3x3 rotation matrix
-    R_f2l, _ = cv2.Rodrigues(rvec)  # follower->leader
-    t_f2l = tvec.reshape(3)
-    
+        R_f2l =  0
+        t_f2l = 0
     # ----------------------------------------------------------------
     # 8) Return results
     # ----------------------------------------------------------------
